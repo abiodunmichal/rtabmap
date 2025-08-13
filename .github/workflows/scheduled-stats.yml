@@ -1,13 +1,16 @@
-- name: Build Android APK
-              uses: reactivecircus/android-emulator-runner@v2
-              with:
-                  api-level: 33
-                  target: google_apis
-                  arch: x86_64
-                  script: ./gradlew assembleRelease
+name: RTAB-Map Scheduled Stats Extraction From GitHub
 
-            - name: Upload APK artifact
-              uses: actions/upload-artifact@v3
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: '0 5 * * *'
+jobs:
+    get_stats:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Update Stats
+              uses: introlab/github-stats-action@v1
               with:
-                  name: RTABMapApp
-                  path: app/build/outputs/apk/release/app-release.apk
+                  github-stats-token: ${{ secrets.STATS_TOKEN }}
+                  google-application-credentials: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+                  spreadsheet-id: ${{ secrets.SPREADSHEET_ID }}
